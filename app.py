@@ -2,6 +2,17 @@ import streamlit as st
 import chromadb
 from chromadb.utils import embedding_functions
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+import os, subprocess
+
+# Auto-ingest if DB is empty
+if not os.path.exists("db") or not os.listdir("db"):
+    os.makedirs("db", exist_ok=True)
+    try:
+        subprocess.run(["python", "ingest.py"], check=True)
+        print("Ingested docs automatically at startup.")
+    except Exception as e:
+        print("Ingestion failed:", e)
+
 
 DB_DIR = "db"
 COLLECTION_NAME = "docs"
